@@ -52,8 +52,8 @@ router.post('/', function(req, res, next) {
 
 router.get('/', function(req, res, next) {
 
-  if (!req.query.login) {
-    return res.status(400).send({ message: 'Must specify query parameter login'});
+  if (!req.query.id) {
+    return res.status(400).send({ message: 'Must specify query parameter id'});
   }
 
   mongoHelper.connect()
@@ -61,17 +61,17 @@ router.get('/', function(req, res, next) {
     var stargazers = db.collection('stargazers');
     bluebird.promisifyAll(stargazers);
 
-    return stargazers.findOneAsync({_id: req.query.login})
+    return stargazers.findOneAsync({_id: req.query.id})
   })
   .then((result) => {
 
     if (result) {
-      var jsonApiCompatible = jsonapi.makeJsonApiCompatible(result, result.login, 'stargazer');
+      var jsonApiCompatible = jsonapi.makeJsonApiCompatible(result, result.login, 'star');
       return res.status(200).send(jsonApiCompatible);
     }
     else {
       return res.status(200).send({
-        data: {}
+        data: []
       });
     }
   })
